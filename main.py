@@ -1,9 +1,13 @@
+import os
+import shutil
 from sys import argv
 from tqdm import tqdm
 from pyfiglet import Figlet
 from helium import *
 import click
+import tldextract
 from platforms_list import platforms
+
 
 f = Figlet(
         font='slant',
@@ -18,8 +22,46 @@ click.echo(click.style((f'Author: vishnu_dileesh'), fg='cyan'))
 @click.command()
 @click.argument('username')
 def main(username):
-    click.echo('name is {}'.format(username))
+    click.echo('Enumerating {}'.format(username))
 
+    try:
+        os.mkdir('screenshots/{}'.format(username))
+    except:
+        shutil.rmtree('screenshots/{}'.format(username))
+
+        os.mkdir('screenshots/{}'.format(username))
+
+    for k, v in platforms.items():
+
+        if v['up']:
+
+            site = 'https://' + username + v['url']
+
+            reconsearch(site, username)
+
+        else:
+
+            site = v['url'] + username
+
+            reconsearch(site, username)
+
+
+
+def reconsearch(site, username):
+
+
+    start_chrome(site)
+
+    site_name = tldextract.extract(site)
+
+    src_name = 'screenshots/{}/{}.png'.format(username, site_name.domain)
+
+    print(src_name)
+
+    get_driver().save_screenshot(src_name)
+
+
+    kill_browser()
 
 
 if __name__ == "__main__":

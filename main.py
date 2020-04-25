@@ -86,8 +86,13 @@ def render_report(username):
         site_link = v[0]
 
         with doc.body:
+            a('Click to visit {} profile of {}'.format(k, username), href=site_link)
+            hr()
             with a(href=site_link):
                 img(src='screenshots/{}/{}.png'.format(username, k))
+            hr()
+            br()
+            br()
 
     with open('{}_report.html'.format(username), 'w') as f:
         f.write(doc.render())
@@ -109,7 +114,7 @@ def render_report(username):
         PORT += 3
         with socketserver.TCPServer(("", PORT), Handler) as httpd:
             click.echo('Report Generated Successfuly')
-            click.echo('Open report at http://localhost:{}/{}.html'.format(PORT, username))
+            click.echo('Open report at http://localhost:{}/{}_report.html'.format(PORT, username))
             httpd.serve_forever()
 
 

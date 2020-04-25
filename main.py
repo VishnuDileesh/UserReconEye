@@ -10,8 +10,8 @@ import tldextract
 import http.server
 import socketserver
 from dominate.tags import *
-from platforms_list import platforms
-
+#from platforms_list import platforms
+from test_list import platforms
 
 f = Figlet(
         font='slant',
@@ -109,7 +109,7 @@ def render_report(username):
     with doc.body:
         h1('UserReconEye')
         h4('__author__ : vishnu_dileesh')
-        p('An open source osint username social media enumeration tool')
+        h4('An open source osint username social media enumeration tool')
 
         br()
         br()
@@ -125,7 +125,7 @@ def render_report(username):
         with doc:
 
             with div(cls='gallery'):
-                with a(href=site_link):
+                with a(href=site_link, target='_blank'):
                     img(src='screenshots/{}/{}.png'.format(username, k))
         
         #with a(href=site_link):

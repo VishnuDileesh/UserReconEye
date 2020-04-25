@@ -13,7 +13,6 @@ from dominate.tags import *
 from platforms_list import platforms
 
 
-
 f = Figlet(
         font='slant',
         width=80
@@ -79,20 +78,59 @@ def render_report(username):
     
     doc = dominate.document(title='Enumeration Report : {}'.format(username))
 
+    with doc.head:
+        style(
+                """\
+
+                h1, h6, h4{
+                margin: 0px !important;
+                }
+
+                p{
+                margin: 0px !important;
+                }
+
+                div.gallery{
+                margin: 5px;
+                border: 1px solid #ccc;
+                float: left;
+                width: 180px;
+                }
+
+                div.gallery img{
+                width: 100%;
+                height: auto;
+                }
+                """
+                )
+
     click.echo('Generating report of {}'.format(username))
+    
+    with doc.body:
+        h1('UserReconEye')
+        h4('__author__ : vishnu_dileesh')
+        p('An open source osint username social media enumeration tool')
+
+        br()
+        br()
+
+        h4('Click on reconed image with positive result to visit the profile')
+
+        br()
 
     for k, v in tqdm(enum_report.items()):
 
         site_link = v[0]
 
-        with doc.body:
-            a('Click to visit {} profile of {}'.format(k, username), href=site_link)
-            hr()
-            with a(href=site_link):
-                img(src='screenshots/{}/{}.png'.format(username, k))
-            hr()
-            br()
-            br()
+        with doc:
+
+            with div(cls='gallery'):
+                with a(href=site_link):
+                    img(src='screenshots/{}/{}.png'.format(username, k))
+        
+        #with a(href=site_link):
+        #    img(src='screenshots/{}/{}.png'.format(username, k))
+        #    hr()
 
     with open('{}_report.html'.format(username), 'w') as f:
         f.write(doc.render())

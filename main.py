@@ -31,7 +31,8 @@ def main(username):
 
         os.mkdir('screenshots/{}'.format(username))
 
-    for k, v in platforms.items():
+
+    for k, v in tqdm(platforms.items()):
 
         if v['up']:
 
@@ -50,13 +51,12 @@ def main(username):
 def reconsearch(site, username):
 
 
-    start_chrome(site)
+    start_chrome(site, headless=True)
 
     site_name = tldextract.extract(site)
 
     src_name = 'screenshots/{}/{}.png'.format(username, site_name.domain)
 
-    print(src_name)
 
     get_driver().save_screenshot(src_name)
 

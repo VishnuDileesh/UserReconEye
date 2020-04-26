@@ -7,11 +7,10 @@ from helium import *
 import dominate
 import click
 import tldextract
-import http.server
-import socketserver
+import time
 from dominate.tags import *
-#from platforms_list import platforms
-from test_list import platforms
+from platforms_list import platforms
+
 
 f = Figlet(
         font='slant',
@@ -25,7 +24,18 @@ click.echo(click.style((f'Author: vishnu_dileesh'), fg='cyan'))
 
 @click.command()
 @click.argument('username')
-def main(username):
+@click.option('--wait', '-w')
+def main(username, wait):
+
+    """
+    Running tool:
+    python3 main.py vishnu_dileesh
+
+    Running tool with 3 seconds delay:
+    python3 main.py -w 3 vishnu_dileesh
+
+    """
+
     click.echo('Enumerating {}'.format(username))
 
     try:
@@ -35,6 +45,11 @@ def main(username):
 
         os.mkdir('screenshots/{}'.format(username))
 
+    try:
+        os.mkdir('reports')
+    except:
+        pass
+
 
     for k, v in tqdm(platforms.items()):
 
@@ -42,13 +57,13 @@ def main(username):
 
             site = 'https://' + username + v['url']
 
-            reconsearch(site, username)
+            reconsearch(site, username, wait)
 
         else:
 
             site = v['url'] + username
 
-            reconsearch(site, username)
+            reconsearch(site, username, wait)
 
 
     render_report(username)
@@ -56,7 +71,7 @@ def main(username):
 enum_report = {}
 
 
-def reconsearch(site, username):
+def reconsearch(site, username, wait):
 
 
     start_chrome(site, headless=True)
@@ -65,6 +80,8 @@ def reconsearch(site, username):
 
     src_name = 'screenshots/{}/{}.png'.format(username, site_name.domain)
 
+    if (wait != None):
+        time.sleep(float(wait))
 
     get_driver().save_screenshot(src_name)
 
@@ -126,34 +143,18 @@ def render_report(username):
 
             with div(cls='gallery'):
                 with a(href=site_link, target='_blank'):
-                    img(src='screenshots/{}/{}.png'.format(username, k))
+                    img(src='../screenshots/{}/{}.png'.format(username, k))
         
-        #with a(href=site_link):
-        #    img(src='screenshots/{}/{}.png'.format(username, k))
-        #    hr()
 
-    with open('{}_report.html'.format(username), 'w') as f:
+
+    with open('reports/{}_report.html'.format(username), 'w') as f:
         f.write(doc.render())
 
-    PORT = 4700
-    Handler = http.server.SimpleHTTPRequestHandler
+    print(os.getcwd())
 
- 
+    current_dir = os.getcwd()
 
-    try: 
-        with socketserver.TCPServer(("", PORT), Handler) as httpd:
-            click.echo('Report Generated Successfuly')
-            click.echo('Open report at http://localhost:{}/{}_report.html'.format(PORT, username))
-
-            httpd.serve_forever()
-
-    except:
-        print('Port is busy, switching port')
-        PORT += 3
-        with socketserver.TCPServer(("", PORT), Handler) as httpd:
-            click.echo('Report Generated Successfuly')
-            click.echo('Open report at http://localhost:{}/{}_report.html'.format(PORT, username))
-            httpd.serve_forever()
+    start_chrome('file:///{}/reports/{}_report.html'.format(current_dir, username))
 
 
 if __name__ == "__main__":

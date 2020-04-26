@@ -150,7 +150,6 @@ def render_report(username):
     with open('reports/{}_report.html'.format(username), 'w') as f:
         f.write(doc.render())
 
-    print(os.getcwd())
 
     current_dir = os.getcwd()
 

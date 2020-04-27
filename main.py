@@ -9,7 +9,7 @@ import click
 import tldextract
 import time
 from dominate.tags import *
-from platforms_list import platforms
+from platforms_list import platform_users, users_platform
 
 
 f = Figlet(
@@ -36,7 +36,7 @@ def main(username, wait):
 
     """
 
-    click.echo('Enumerating {}'.format(username))
+    click.echo('\nEnumerating {}\n'.format(username))
 
     try:
         os.mkdir('screenshots/{}'.format(username))
@@ -51,22 +51,24 @@ def main(username, wait):
         pass
 
 
-    for k, v in tqdm(platforms.items()):
+    if wait == None:
+        wait = 0
 
-        if v['up']:
+    for p_u in tqdm(platform_users):
 
-            site = 'https://' + username + v['url']
+        site = ''.join((p_u, username))
 
-            reconsearch(site, username, wait)
+        reconsearch(site, username, wait)
 
-        else:
 
-            site = v['url'] + username
+    for u_p in tqdm(users_platform):
 
-            reconsearch(site, username, wait)
+        site = ''.join(('https://', username, u_p))
 
+        reconsearch(site, username, wait)
 
     render_report(username)
+
 
 enum_report = {}
 
@@ -78,10 +80,11 @@ def reconsearch(site, username, wait):
 
     site_name = tldextract.extract(site)
 
-    src_name = 'screenshots/{}/{}.png'.format(username, site_name.domain)
+    src_name = ''.join(('screenshots/', username, '/', site_name.domain, '.png'))
 
-    if (wait != None):
-        time.sleep(float(wait))
+
+    time.sleep(float(wait))
+
 
     get_driver().save_screenshot(src_name)
 
@@ -121,7 +124,7 @@ def render_report(username):
                 """
                 )
 
-    click.echo('Generating report of {}'.format(username))
+    click.echo('\nGenerating report of {}'.format(username))
     
     with doc.body:
         h1('UserReconEye')

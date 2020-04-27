@@ -9,8 +9,6 @@ Automated Username OSINT tool which scans over 70 social media sites for profile
 
 ![Demo UserReconEye](demo/demo.gif) 
 
-![Demo Screenshot](demo/demo_scr2.png) ![Demo Screenshot](demo/demo_scr1.png)
-
 
 
 ---

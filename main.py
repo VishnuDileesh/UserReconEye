@@ -70,7 +70,6 @@ def main(username, wait):
     render_report(username)
 
 
-enum_report = {}
 
 
 def reconsearch(site, username, wait):
@@ -88,7 +87,6 @@ def reconsearch(site, username, wait):
 
     get_driver().save_screenshot(src_name)
 
-    enum_report[site_name.domain] = [site, src_name]
 
     kill_browser()
 
@@ -138,17 +136,23 @@ def render_report(username):
 
         br()
 
-    for k, v in tqdm(enum_report.items()):
 
-        site_link = v[0]
 
+    for pu in platform_users:
+        sitename = tldextract.extract(pu)
         with doc:
-
             with div(cls='gallery'):
-                with a(href=site_link, target='_blank'):
-                    img(src='../screenshots/{}/{}.png'.format(username, k))
-        
+                with a(href='{}{}'.format(pu, username), target='_blank'):
+                    img(src='../screenshots/{}/{}.png'.format(username, sitename.domain))
+    
+    for up in users_platform:
+        sitename = tldextract.extract(up)
+        with doc:
+            with div(cls='gallery'):
+                with a(href='https://{}{}'.format(username, up), target='_blank'):
+                    img(src='../screenshots/{}/{}.png'.format(username, sitename.domain))
 
+    
 
     with open('reports/{}_report.html'.format(username), 'w') as f:
         f.write(doc.render())
@@ -157,6 +161,9 @@ def render_report(username):
     current_dir = os.getcwd()
 
     start_chrome('file:///{}/reports/{}_report.html'.format(current_dir, username))
+    
+    click.echo('\nReport Successfully generated')
+
 
 
 if __name__ == "__main__":

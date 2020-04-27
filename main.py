@@ -54,6 +54,8 @@ def main(username, wait):
     if wait == None:
         wait = 0
 
+    start_chrome(headless=True)
+
     for p_u in tqdm(platform_users):
 
         site = ''.join((p_u, username))
@@ -75,7 +77,7 @@ def main(username, wait):
 def reconsearch(site, username, wait):
 
 
-    start_chrome(site, headless=True)
+    go_to(site)
 
     site_name = tldextract.extract(site)
 
@@ -86,9 +88,6 @@ def reconsearch(site, username, wait):
 
 
     get_driver().save_screenshot(src_name)
-
-
-    kill_browser()
 
 
 
